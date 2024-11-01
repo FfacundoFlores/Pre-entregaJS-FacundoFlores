@@ -1,58 +1,72 @@
-let saldo = 1000; // Saldo inicial
+// Juego de adivinar el numero
+const juego = {
+    numeroSecreto: Math.floor(Math.random() * 100) + 1,
+    intentos: [],
+    maxIntentos: 10,
+    mensaje: ''
+};
 
-// Función para consultar saldo
-function consultarSaldo() {
-    alert(`Tu saldo actual es: $${saldo}`);
+
+function iniciarJuego() {
+    juego.numeroSecreto = Math.floor(Math.random() * 100) + 1;
+    juego.intentos = [];
+    juego.mensaje = '¡Adivina un número entre 1 y 100! Tienes ' + juego.maxIntentos + ' intentos.';
+    alert(juego.mensaje);
 }
 
-// Función para depositar dinero
-function depositarDinero() {
-    let deposito = parseFloat(prompt("Ingrese la cantidad que desea depositar:"));
-    if (isNaN(deposito) || deposito <= 0) {
-        alert("Por favor, ingresa una cantidad válida.");
-    } else {
-        saldo += deposito;
-        alert(`Se han depositado $${deposito}. Saldo actual: $${saldo}`);
+
+function adivinarNumero(numero) {
+    if (numero < 1 || numero > 100) {
+        juego.mensaje = 'Por favor, ingresa un número entre 1 y 100.';
+        alert(juego.mensaje);
+        return false;
     }
-}
 
-// Función para retirar dinero
-function retirarDinero() {
-    let retiro = parseFloat(prompt("Ingrese la cantidad que desea retirar:"));
-    if (isNaN(retiro) || retiro <= 0 || retiro > saldo) {
-        alert("Fondos insuficientes o cantidad inválida.");
-    } else {
-        saldo -= retiro;
-        alert(`Has retirado $${retiro}. Saldo actual: $${saldo}`);
+
+    if (juego.intentos.includes(numero)) {
+        juego.mensaje = 'Ya has adivinado ese número. Intenta con otro.';
+        alert(juego.mensaje);
+        return false;
     }
+
+    juego.intentos.push(numero);
+
+    if (numero === juego.numeroSecreto) {
+        juego.mensaje = '¡Felicidades! Adivinaste el número: ' + juego.numeroSecreto;
+        alert(juego.mensaje);
+        return true;
+    }
+
+    if (juego.intentos.length >= juego.maxIntentos) {
+        juego.mensaje = 'Has agotado tus intentos. El número era: ' + juego.numeroSecreto;
+        alert(juego.mensaje);
+        return true;
+    }
+
+
+    if (numero < juego.numeroSecreto) {
+        juego.mensaje = 'El número es más alto. Intentos restantes: ' + (juego.maxIntentos - juego.intentos.length);
+    } else {
+        juego.mensaje = 'El número es más bajo. Intentos restantes: ' + (juego.maxIntentos - juego.intentos.length);
+    }
+
+    alert(juego.mensaje);
+    return false;
 }
 
-function ejecutarCajero() {
-    let opcion;
-    do {
-        opcion = prompt(`Selecciona una opción:
-        1. Consultar saldo
-        2. Depositar dinero
-        3. Retirar dinero
-        4. Salir`);
-        
-        switch (opcion) {
-            case "1":
-                consultarSaldo();
-                break;
-            case "2":
-                depositarDinero();
-                break;
-            case "3":
-                retirarDinero();
-                break;
-            case "4":
-                alert("Gracias por utilizar nuestro cajero automático.");
-                break;
-            default:
-                alert("Opción inválida. Por favor, selecciona una opción válida.");
+function jugar() {
+    iniciarJuego();
+    let adivinado = false;
+
+    while (!adivinado && juego.intentos.length < juego.maxIntentos) {
+        const numero = parseInt(prompt('Introduce tu adivinanza:'));
+        if (!isNaN(numero)) {
+            adivinado = adivinarNumero(numero);
+        } else {
+            alert('Por favor, ingresa un número válido.');
         }
-    } while (opcion !== "4");
+    }
 }
 
-ejecutarCajero();
+
+jugar();
